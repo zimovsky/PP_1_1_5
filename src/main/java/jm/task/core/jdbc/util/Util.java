@@ -2,12 +2,43 @@ package jm.task.core.jdbc.util;
 
 import jm.task.core.jdbc.model.User;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
 public class Util {
+
+    // Hibernate configuration
+    private static final SessionFactory sessionFactory;
+    static {
+        try {
+            Properties prop = new Properties();
+            prop.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/jdbc_hibernate");
+            prop.setProperty("hibernate.connection.username", "root");
+            prop.setProperty("hibernate.connection.password", "J[etyyjCkj;ysqGfhjkm");
+            prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
+            prop.setProperty("hibernate.hbm2ddl.auto", "update");
+
+            sessionFactory = new org.hibernate.cfg.Configuration()
+                    .addProperties(prop)
+                    .addAnnotatedClass(User.class)
+                    .buildSessionFactory()
+            ;
+        }
+        catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    public static Session getSession() throws HibernateException {
+        return sessionFactory.openSession();
+    }
+
     // JDBC URL, username and password of MySQL server
     private static final String url = "jdbc:mysql://localhost:3306/jdbc_hibernate";
     private static final String user = "root";
@@ -52,4 +83,6 @@ public class Util {
 
         return users;
     }
+
+
 }
